@@ -23,16 +23,27 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 @RestController
 public class GreetingController {
 
 	private static final String template = "Hello, %s!";
-	
+
 	private final AtomicLong counter = new AtomicLong();
 
 	@RequestMapping("/greeting")
+	//@PreAuthorize("isAuthenticated() and hasPermission(#authentication, 'WORLD')")
+	@PreAuthorize("hasAccoutUpdatePermission(#user, 'account', 'update')")
 	public Greeting greeting(@AuthenticationPrincipal User user) {
+		return new Greeting(counter.incrementAndGet(), String.format(template, user.getName()));
+	}
+
+	@RequestMapping("/mygreeting/{leagueId}")
+	//@PreAuthorize("isAuthenticated() and hasPermission(#authentication, 'WORLD')")
+	//@PreAuthorize("hasAccoutUpdatePermission(#user, 'account', 'update')")
+	@PreAuthorize("hasPermission(#leagueId, 'isLeagueUser')")
+	public Greeting mygreeting( @PathVariable Long leagueId,@AuthenticationPrincipal User user) {
 		return new Greeting(counter.incrementAndGet(), String.format(template, user.getName()));
 	}
 
