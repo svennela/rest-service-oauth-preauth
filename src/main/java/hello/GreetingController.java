@@ -42,7 +42,7 @@ public class GreetingController {
 	@RequestMapping("/mygreeting/{leagueId}")
 	//@PreAuthorize("isAuthenticated() and hasPermission(#authentication, 'WORLD')")
 	//@PreAuthorize("hasAccoutUpdatePermission(#user, 'account', 'update')")
-	@PreAuthorize("hasPermission(#leagueId, 'isLeagueUser')")
+	@PreAuthorize("hasPermission(#user, 'isLeagueUser')")
 	public Greeting mygreeting( @PathVariable Long leagueId,@AuthenticationPrincipal User user) {
 		return new Greeting(counter.incrementAndGet(), String.format(template, user.getName()));
 	}
